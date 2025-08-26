@@ -1,0 +1,92 @@
+<style>
+    /* Reset default margin/padding */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        background-color: #f8f9fa; /* light navbar background */
+        border-bottom: 1px solid #ddd;
+    }
+
+    .brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+    .brand span {
+        color: #007bff; /* highlight "Notes" in blue */
+    }
+
+    .nav-list {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-list li a {
+        text-decoration: none;
+        color: #333;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .nav-list li a:hover {
+        color: #007bff; /* hover effect */
+    }
+
+    /* Search bar styling */
+    form {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    form input[type="text"] {
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+    form input[type="text"]:focus {
+        border-color: #007bff;
+    }
+
+    form button {
+        padding: 6px 12px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    form button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<nav>
+    <p class="brand">Smart<span>Notes</span></p>
+
+    <form action="{% url 'search_notes' %}" method="GET">
+        <input type="text" name="q" placeholder="Search notes...">
+        <button type="submit">Search</button>
+    </form>
+
+    <ul class="nav-list">
+         <li><a href="{% url 'home' %}">Home</a></li>
+         <li><a href="{% url 'create_note' %}">Make a Note</a></li>
+    </ul>
+</nav>

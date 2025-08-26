@@ -1,0 +1,71 @@
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-container h2 {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+    }
+
+    form p {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    form label {
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #444;
+    }
+
+    form input[type="text"],
+    form textarea {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+        font-size: 1rem;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+    form input[type="text"]:focus,
+    form textarea:focus {
+        border-color: #007bff;
+    }
+
+    form button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    form button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% block content %}
+<div class="form-container">
+  <h2>Create a New Note</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Note</button>
+  </form>
+</div>
+{% endblock %}
