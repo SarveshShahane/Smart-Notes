@@ -8,6 +8,11 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
+body.dark-mode .form-container {
+    background: #23272b;
+    border-color: #444;
+    color: #e2e2e2;
+}
 
     .form-container h2 {
         margin-bottom: 20px;
@@ -26,6 +31,7 @@
         margin-bottom: 6px;
         color: #444;
     }
+body.dark-mode form label { color: #e2e2e2; }
 
     form input[type="text"],
     form textarea {
@@ -36,6 +42,12 @@
         font-size: 1rem;
         transition: border-color 0.2s ease-in-out;
     }
+body.dark-mode form input[type="text"],
+body.dark-mode form textarea {
+    background: #23272b;
+    color: #e2e2e2;
+    border-color: #444;
+}
 
     form input[type="text"]:focus,
     form textarea:focus {
@@ -61,6 +73,7 @@
 </style>
 {% block content %}
 <div class="form-container">
+  {% include 'notes/navbar.html' %}
   <h2>Create a New Note</h2>
   <form method="post">
     {% csrf_token %}
