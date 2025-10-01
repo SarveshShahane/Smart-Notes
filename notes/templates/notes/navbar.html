@@ -15,6 +15,40 @@
         font-size: 1.1rem;
         background-color: #f8f9fa; /* light navbar background */
         border-bottom: 1px solid #ddd;
+        transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode nav {
+        background-color: #23272b;
+        color: #e2e2e2;
+        border-bottom: 1px solid #444;
+    }
+    body.dark-mode .brand {
+        color: #e2e2e2;
+    }
+    body.dark-mode .brand span {
+        color: #90caf9;
+    }
+    body.dark-mode .nav-list li a {
+        color: #e2e2e2;
+    }
+    body.dark-mode .nav-list li a:hover {
+        color: #90caf9;
+    }
+    body.dark-mode form input[type="text"] {
+        background: #23272b;
+        color: #e2e2e2;
+        border-color: #444;
+    }
+    body.dark-mode form input[type="text"]:focus {
+        border-color: #90caf9;
+    }
+    body.dark-mode form button {
+        background-color: #90caf9;
+        color: #23272b;
+    }
+    body.dark-mode form button:hover {
+        background-color: #007bff;
+        color: #fff;
     }
 
     .brand {
@@ -89,4 +123,5 @@
          <li><a href="{% url 'home' %}">Home</a></li>
          <li><a href="{% url 'create_note' %}">Make a Note</a></li>
     </ul>
+    <button id="dark-mode-toggle" style="margin-left:20px;padding:6px 12px;border-radius:4px;border:none;background:#333;color:#fff;cursor:pointer;transition:background 0.3s;">Dark Mode</button>
 </nav>
