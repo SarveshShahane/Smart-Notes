@@ -125,3 +125,29 @@
     </ul>
     <button id="dark-mode-toggle" style="margin-left:20px;padding:6px 12px;border-radius:4px;border:none;background:#333;color:#fff;cursor:pointer;transition:background 0.3s;">Dark Mode</button>
 </nav>
+
+<script>
+  (function() {
+    function setDarkMode(enabled) {
+      document.body.classList.toggle('dark-mode', enabled);
+      try { localStorage.setItem('darkMode', enabled ? '1' : '0'); } catch (e) {}
+      var btn = document.getElementById('dark-mode-toggle');
+      if (btn) { btn.textContent = enabled ? 'Light Mode' : 'Dark Mode'; }
+    }
+    function sync() {
+      var enabled = false;
+      try { enabled = localStorage.getItem('darkMode') === '1'; } catch (e) { enabled = false; }
+      setDarkMode(enabled);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      sync();
+      var btn = document.getElementById('dark-mode-toggle');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          var next = !(document.body.classList.contains('dark-mode'));
+          setDarkMode(next);
+        });
+      }
+    });
+  })();
+</script>

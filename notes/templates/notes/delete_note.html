@@ -13,6 +13,8 @@
             margin: 0;
         }
 
+        body.dark-mode { background-color: #181a1b; color: #e2e2e2; }
+
         .delete-container {
             background: #fff;
             padding: 25px;
@@ -22,6 +24,8 @@
             width: 100%;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
+        body.dark-mode .delete-container { background: #23272b; box-shadow: none; border: 1px solid #444; }
 
         .delete-container h2 {
             margin-bottom: 20px;
@@ -63,9 +67,12 @@
         .delete-container a:hover {
             background-color: #565e64;
         }
+
+        body.dark-mode .delete-container a { background-color: #4b5563; }
     </style>
 </head>
 <body>
+    {% include 'notes/navbar.html' %}
     <div class="delete-container">
         <h2>Are you sure you want to delete "<strong>{{ note.title }}</strong>"?</h2>
         
