@@ -8,31 +8,27 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
-body.dark-mode .form-container {
-    background: #23272b;
-    border-color: #444;
-    color: #e2e2e2;
-}
-
+    body.dark-mode .form-container {
+        background: #23272b;
+        border-color: #444;
+        color: #e2e2e2;
+    }
     .form-container h2 {
         margin-bottom: 20px;
         text-align: center;
         color: #333;
     }
-
     form p {
         display: flex;
         flex-direction: column;
         margin-bottom: 15px;
     }
-
     form label {
         font-weight: bold;
         margin-bottom: 6px;
         color: #444;
     }
-body.dark-mode form label { color: #e2e2e2; }
-
+    body.dark-mode form label { color: #e2e2e2; }
     form input[type="text"],
     form textarea {
         padding: 10px;
@@ -42,18 +38,16 @@ body.dark-mode form label { color: #e2e2e2; }
         font-size: 1rem;
         transition: border-color 0.2s ease-in-out;
     }
-body.dark-mode form input[type="text"],
-body.dark-mode form textarea {
-    background: #23272b;
-    color: #e2e2e2;
-    border-color: #444;
-}
-
+    body.dark-mode form input[type="text"],
+    body.dark-mode form textarea {
+        background: #23272b;
+        color: #e2e2e2;
+        border-color: #444;
+    }
     form input[type="text"]:focus,
     form textarea:focus {
         border-color: #007bff;
     }
-
     form button {
         width: 100%;
         padding: 10px;
@@ -66,19 +60,69 @@ body.dark-mode form textarea {
         cursor: pointer;
         transition: background-color 0.2s ease-in-out;
     }
-
     form button:hover {
         background-color: #0056b3;
+    }
+    .color-picker { display: flex; gap: 8px; margin-bottom: 12px; }
+    .color-option {
+        width: 22px; height: 22px; border-radius: 50%; border: 2px solid #eee; cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .color-option.selected { border: 2px solid #007bff; }
+    #markdown-preview {
+      border:1px solid #ccc; padding:10px; background:#fafafa; min-height:40px; margin-top:8px;
     }
 </style>
 {% block content %}
 <div class="form-container">
   {% include 'notes/navbar.html' %}
-  <h2>Create a New Note</h2>
-  <form method="post">
+  <form method="post" id="note-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Note</button>
+    {{ form.title.label_tag }}{{ form.title }}
+    {{ form.content.label_tag }}<textarea id="id_content" name="content"></textarea>
+    {{ form.tags.label_tag }}{{ form.tags }}
+    <label>Pick a color:</label>
+    <div class="color-picker" id="color-picker">
+      <div class="color-option" data-color="#fff" style="background:#fff"></div>
+      <div class="color-option" data-color="#ffe4e1" style="background:#ffe4e1"></div>
+      <div class="color-option" data-color="#e0f7fa" style="background:#e0f7fa"></div>
+      <div class="color-option" data-color="#e8f5e9" style="background:#e8f5e9"></div>
+      <div class="color-option" data-color="#fffde7" style="background:#fffde7"></div>
+      <div class="color-option" data-color="#f3e5f5" style="background:#f3e5f5"></div>
+    </div>
+    <input type="hidden" name="color" id="selected-color" value="#fff">
+    <button type="submit">Create Note</button>
+    <h4>Live Markdown Preview</h4>
+    <div id="markdown-preview"></div>
   </form>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  
+  document.getElementById('id_content').addEventListener('input', function() {
+    document.getElementById('markdown-preview').innerHTML = marked.parse(this.value);
+  });
+
+
+  const picker = document.getElementById('color-picker');
+  const options = picker.querySelectorAll('.color-option');
+  const colorInput = document.getElementById('selected-color');
+  options.forEach(opt => {
+    opt.onclick = function() {
+      options.forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      colorInput.value = this.dataset.color;
+    };
+  });
+  options[0].classList.add('selected');
+
+  document.getElementById('note-form').onsubmit = function() {
+    const title = document.querySelector('[name="title"]').value;
+    const color = colorInput.value;
+    if(title) {
+      // Save color for this note (keyed by title)
+      localStorage.setItem('note-color-' + title, color);
+    }
+  };
+</script>
 {% endblock %}
