@@ -72,6 +72,14 @@
     #markdown-preview {
       border:1px solid #ccc; padding:10px; background:#fafafa; min-height:40px; margin-top:8px;
     }
+    #count-info {
+      font-size:0.95em;
+      color:#555;
+      margin-bottom:8px;
+    }
+    body.dark-mode #count-info {
+      color:#bdbdbd;
+    }
 </style>
 {% block content %}
 <div class="form-container">
@@ -80,6 +88,9 @@
     {% csrf_token %}
     {{ form.title.label_tag }}{{ form.title }}
     {{ form.content.label_tag }}<textarea id="id_content" name="content"></textarea>
+    <div id="count-info">
+      Words: <span id="word-count">0</span> | Characters: <span id="char-count">0</span>
+    </div>
     {{ form.tags.label_tag }}{{ form.tags }}
     <label>Pick a color:</label>
     <div class="color-picker" id="color-picker">
@@ -98,12 +109,17 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-  
+  function updateCount() {
+    const val = document.getElementById('id_content').value;
+    document.getElementById('char-count').textContent = val.length;
+    const words = val.trim().split(/\s+/).filter(w => w.length);
+    document.getElementById('word-count').textContent = val.trim() ? words.length : 0;
+  }
   document.getElementById('id_content').addEventListener('input', function() {
+    updateCount();
     document.getElementById('markdown-preview').innerHTML = marked.parse(this.value);
   });
-
-
+  updateCount();
   const picker = document.getElementById('color-picker');
   const options = picker.querySelectorAll('.color-option');
   const colorInput = document.getElementById('selected-color');
@@ -120,7 +136,6 @@
     const title = document.querySelector('[name="title"]').value;
     const color = colorInput.value;
     if(title) {
-      // Save color for this note (keyed by title)
       localStorage.setItem('note-color-' + title, color);
     }
   };
