@@ -48,18 +48,30 @@
       margin-bottom: 12px;
       transition: color 0.3s;
     }
-    .note-delete {
+    .note-delete, .note-export {
       display: inline-block;
       padding: 6px 12px;
-      background-color: #dc3545;
-      color: #fff;
       border-radius: 4px;
       text-decoration: none;
       font-size: 0.9rem;
       transition: background-color 0.2s ease;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    .note-delete {
+      background-color: #dc3545;
+      color: #fff;
     }
     .note-delete:hover {
       background-color: #a71d2a;
+    }
+    .note-export {
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+    }
+    .note-export:hover {
+      background-color: #004ba0;
     }
     body.dark-mode {
       background: #181a1b;
@@ -86,6 +98,13 @@
     body.dark-mode .note-delete:hover {
       background-color: #7f0000;
     }
+    body.dark-mode .note-export {
+      background-color: #1565c0;
+      color: #fff;
+    }
+    body.dark-mode .note-export:hover {
+      background-color: #002171;
+    }
     </style>
 </head>
 <body>
@@ -107,6 +126,7 @@
               <div class="note-content">{{ note.content }}</div>
               <p class="note-tags">Tags: {{ note.tags }}</p>
               <a class="note-delete" href="{% url 'delete_note' note.id %}">Delete</a>
+              <button class="note-export" onclick="exportNote('{{ note.title|escapejs }}', `{{ note.content|escapejs }}`, `{{ note.tags|escapejs }}`)">Export</button>
           </div>
       {% endfor %}
     </div>
@@ -154,11 +174,23 @@
           const title = card.dataset.title;
           const color = localStorage.getItem('note-color-' + title);
           if(color) card.style.background = color;
-          // Markdown render for note content
           const nc = card.querySelector('.note-content');
           if (nc) nc.innerHTML = marked.parse(nc.textContent);
         });
       });
+
+      function exportNote(title, content, tags) {
+        const text = `Title: ${title}\nTags: ${tags}\n\n${content}`;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     </script>
 </body>
 </html>
