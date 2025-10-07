@@ -1,19 +1,18 @@
-from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
 from . import forms
 from .models import Note
 from django.contrib import messages
+
 # read notes
 def home(request):
-    notes=Note.objects.all().order_by('-time')
-    context={'notes':notes}
-    return render(request, "notes/home.html",context)
-
+    notes = Note.objects.all().order_by('-time')
+    context = {'notes': notes}
+    return render(request, "notes/home.html", context)
 
 # create notes form route
-
 def create_note(request):
-    context={'form':forms.NoteForm()}
+    context = {'form': forms.NoteForm()}
     if request.method == "POST":
         form = forms.NoteForm(request.POST)
         if form.is_valid():
@@ -27,18 +26,29 @@ def create_note(request):
 
 # search notes
 def search_notes(request):
-    query=request.GET.get('q')
+    query = request.GET.get('q')
     # search match results with title and tags
-    results=Note.objects.filter(title__icontains=query) | Note.objects.filter(tags__icontains=query)
-    context={'notes':results}
+    results = Note.objects.filter(title__icontains=query) | Note.objects.filter(tags__icontains=query)
+    context = {'notes': results}
     return render(request, "notes/home.html", context)
 
 # delete note
-def delete_note(request,note_id):
-    note=Note.objects.get(id=note_id)
-    if(request.method== "POST"):
+def delete_note(request, note_id):
+    note = Note.objects.get(id=note_id)
+    if request.method == "POST":
         note.delete()
         messages.success(request, 'Note deleted successfully!')
         return redirect('home')
-    
-    return render(request, "notes/delete_note.html",{'note':note})
+    return render(request, "notes/delete_note.html", {'note': note})
+
+# emoji reaction endpoint
+def add_emoji_reaction(request, note_id):
+    if request.method == "POST":
+        note = Note.objects.get(id=note_id)
+        emoji = request.POST.get("emoji")
+        reactions = note.emoji_reactions
+        reactions[emoji] = reactions.get(emoji, 0) + 1
+        note.emoji_reactions = reactions
+        note.save()
+        return JsonResponse({"success": True, "reactions": reactions})
+    return JsonResponse({"success": False}, status=400)
