@@ -73,6 +73,20 @@
     .note-export:hover {
       background-color: #004ba0;
     }
+    .note-reactions {
+      margin-top: 10px;
+    }
+    .emoji-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+    .emoji-count {
+      font-size: 1rem;
+      margin-right: 12px;
+    }
     body.dark-mode {
       background: #181a1b;
       color: #e2e2e2;
@@ -127,6 +141,15 @@
               <p class="note-tags">Tags: {{ note.tags }}</p>
               <a class="note-delete" href="{% url 'delete_note' note.id %}">Delete</a>
               <button class="note-export" onclick="exportNote('{{ note.title|escapejs }}', `{{ note.content|escapejs }}`, `{{ note.tags|escapejs }}`)">Export</button>
+              <div class="note-reactions" id="reactions-{{ note.id }}">
+                <button class="emoji-btn" onclick="addReaction({{ note.id }}, '👍')">👍</button>
+                <button class="emoji-btn" onclick="addReaction({{ note.id }}, '⭐')">⭐</button>
+                <span>
+                  {% for emoji, count in note.emoji_reactions.items %}
+                    {{ emoji }} {{ count }}
+                  {% endfor %}
+                </span>
+              </div>
           </div>
       {% endfor %}
     </div>
@@ -143,7 +166,6 @@
         }
       }, 3000);
 
-      
       function setDarkMode(enabled) {
         document.body.classList.toggle('dark-mode', enabled);
         localStorage.setItem('darkMode', enabled ? '1' : '0');
@@ -169,7 +191,6 @@
           };
         }
 
-
         document.querySelectorAll('.note-card').forEach(function(card){
           const title = card.dataset.title;
           const color = localStorage.getItem('note-color-' + title);
@@ -190,6 +211,22 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      }
+
+      function addReaction(noteId, emoji) {
+        fetch(`/notes/react/${noteId}/`, {
+          method: "POST",
+          headers: {"X-CSRFToken": "{{ csrf_token }}"},
+          body: new URLSearchParams({emoji})
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success) {
+            let html = "";
+            for(const [e, c] of Object.entries(data.reactions)) html += `${e} ${c} `;
+            document.getElementById("reactions-"+noteId).querySelector("span").textContent = html;
+          }
+        });
       }
     </script>
 </body>
